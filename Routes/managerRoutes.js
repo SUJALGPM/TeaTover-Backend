@@ -4,7 +4,7 @@ const { managerRegister } = require("../Controllers/managerController");
 const router = express.Router();
 
 //Manager Register Route....
-router.post("/manager-register", managerRegister);
+router.post("/manager-register/:id", managerRegister);
 
 
 module.exports = router;

@@ -5,6 +5,8 @@ const colors = require('colors');
 const cors = require('cors');
 const morgan = require('morgan');
 const managerRoutes = require("./Routes/managerRoutes");
+const adminRoutes = require("./Routes/adminRoutes");
+
 
 //Configure the .env file...
 dotenv.config();
@@ -23,6 +25,7 @@ app.use(express.static('uploads'));
 
 //Routes configure setup...
 app.use("/api/mgr", managerRoutes);
+app.use("/api/adm", adminRoutes);
 
 //Setup the server port....
 const port = process.env.PORT || 7005
