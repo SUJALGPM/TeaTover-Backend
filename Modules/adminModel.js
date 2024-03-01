@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const managerSchema = require("./managerModel");
 
 const adminSchema = mongoose.Schema({
     adminID: {
@@ -14,7 +15,7 @@ const adminSchema = mongoose.Schema({
         required: false
     },
     TotalManagers: {
-        type: [],
+        type: [managerSchema.managerSchema],
         default: []
     }
 }, { timestamps: true });

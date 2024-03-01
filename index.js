@@ -4,6 +4,7 @@ const connectDB = require('./Config/db');
 const colors = require('colors');
 const cors = require('cors');
 const morgan = require('morgan');
+const managerRoutes = require("./Routes/managerRoutes");
 
 //Configure the .env file...
 dotenv.config();
@@ -21,8 +22,7 @@ app.use(morgan("dev"));
 app.use(express.static('uploads'));
 
 //Routes configure setup...
-// app.use("/api/admin", adminRoute);
-// app.use("/api/mr", mrRoute);
+app.use("/api/mgr", managerRoutes);
 
 //Setup the server port....
 const port = process.env.PORT || 7005

@@ -39,9 +39,10 @@ const yearModelSchema = mongoose.Schema({
         }],
         totalInvoice: Number,
         TotalSaleDays: Number
-    }]
+    }],
+    TotalYears: { type: mongoose.Schema.Types.ObjectId, ref: 'Managers' }
 });
 
 const yearModel = mongoose.model('YearModel', yearModelSchema);
 
-module.exports = yearModel;
+module.exports = { yearModel, yearModelSchema };

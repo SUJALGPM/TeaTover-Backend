@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const yearModelSchema = require("./yearModel");
 
 const managerSchema = mongoose.Schema({
     managerID: {
@@ -18,12 +19,13 @@ const managerSchema = mongoose.Schema({
         required: false
     },
     TotalYears: {
-        type: [],
+        type: [yearModelSchema.yearModelSchema],
         default: []
-    }
+    },
+    TotalManagers: { type: mongoose.Schema.Types.ObjectId, ref: 'Admins' }
 });
 
 const managerModel = mongoose.model('Managers', managerSchema);
 
-module.exports = managerModel;
+module.exports = { managerModel, managerSchema };
 
