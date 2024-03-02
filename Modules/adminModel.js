@@ -18,6 +18,10 @@ const adminSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    adminTrue: {
+        type: Boolean,
+        default: true
+    },
     TotalManagers: {
         type: [managerSchema.managerSchema],
         default: []

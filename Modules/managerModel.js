@@ -18,6 +18,10 @@ const managerSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    adminTrue: {
+        type: Boolean,
+        default: false
+    },
     TotalYears: {
         type: [yearModelSchema.yearModelSchema],
         default: []
