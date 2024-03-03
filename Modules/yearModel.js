@@ -6,9 +6,18 @@ const monthSchema = mongoose.Schema({
     TeaVendors: [{
         TeaVendorName: String,
         Chai: [{
-            TotalSold: String,
-            PerPrice: String,
-            Date: { type: Date, default: Date.now },
+            TotalSold: Number,
+            PerPrice: Number,
+            Date: {
+                type: String,
+                default: () => {
+                    const currentDate = new Date();
+                    const day = currentDate.getDate().toString().padStart(2, '0');
+                    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so we add 1
+                    const year = currentDate.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            },
             Time: {
                 type: String,
                 default: () => {
@@ -21,9 +30,18 @@ const monthSchema = mongoose.Schema({
             }
         }],
         Coffee: [{
-            TotalSold: String,
-            PerPrice: String,
-            Date: { type: Date, default: Date.now },
+            TotalSold: Number,
+            PerPrice: Number,
+            Date: {
+                type: String, // Change the type to String
+                default: () => {
+                    const currentDate = new Date();
+                    const day = currentDate.getDate().toString().padStart(2, '0');
+                    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so we add 1
+                    const year = currentDate.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            },
             Time: {
                 type: String,
                 default: () => {

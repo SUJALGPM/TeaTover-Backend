@@ -159,23 +159,80 @@ const createNewMonth = async (req, res) => {
 //Manager Entry Controller...
 const managerEntry = async (req, res) => {
     try {
-        const managerID = req.params.id;
-        const { YearWiseName } = req.body;
+        const managerID = req.params.mgrID;
+        const yearNAME = req.params.yearNAME;
+        const monthNAME = req.params.monthNAME;
+
+        const { TeaVendorName, chaiTotalSold, chaiPerPrice, coffeeTotalSold, coffeePerPrice } = req.body;
 
         //Check the manager is exist or not...
-        const managerExist = await mgrModel.managerModel.findById(managerID).populate('TotalYears');
+        const managerExist = await managerModel.findById(managerID);
         if (!managerExist) {
             return res.status(500).send({ message: "Manager not found..!!", success: false });
         }
 
+        //Check Year is exist or not...
+        const yearExist = await yearModel.findOne({ YearWiseName: yearNAME }).populate('TotalMonth');
+        if (!yearExist) {
+            return res.status(404).send({ message: "Year not found..!!", successL: false });
+        }
 
+        //Check the month is exist or not....
+        const monthExist = await monthModel.findOne({ monthName: monthNAME });
+        if (!monthExist) {
+            return res.status(404).send({ message: "Month not found..!!!", success: false });
+        }
 
-        //Format the new data...
+        //Check the specific teaVendor is exist or not to insert entry....
+        let teaVendorExist = monthExist.TeaVendors.findIndex(vendor => vendor.TeaVendorName === TeaVendorName);
+        if (teaVendorExist === -1) {
+            // If the tea vendor does not exist, create a new one...
+            const newTeaVendor = { TeaVendorName: TeaVendorName, Chai: [], Coffee: [] }
+            monthExist.TeaVendors.push(newTeaVendor);
+            teaVendorExist = monthExist.TeaVendors.length - 1;
+            await monthExist.save();
+        }
+
+        //Now Record New Entry....
+        const chaiFormatData = {
+            TotalSold: chaiTotalSold,
+            PerPrice: chaiPerPrice
+        }
+        //Push the record to Chai Entry...
+        monthExist.TeaVendors[teaVendorExist].Chai.push(chaiFormatData);
+
+        //Now Record New Entry....
+        const coffeeFormatData = {
+            TotalSold: coffeeTotalSold,
+            PerPrice: coffeePerPrice
+        }
+        //Push the record to Coffee Entry....
+        monthExist.TeaVendors[teaVendorExist].Coffee.push(coffeeFormatData);
+
+        //Record Calculation....
+        const totalOfChaiInvoice = chaiPerPrice * chaiTotalSold;
+        const totalOfCoffeeInvoice = coffeePerPrice * coffeeTotalSold;
+        console.log("Total Chai : ", totalOfChaiInvoice);
+        console.log("Total coffee : ", totalOfCoffeeInvoice);
+        console.log("Total Price : ", totalOfChaiInvoice + totalOfCoffeeInvoice);
+
+        //Update the total Invoice after new entry....
+        monthExist.totalInvoice = (monthExist.totalInvoice || 0) + (totalOfChaiInvoice + totalOfCoffeeInvoice);
+
+        //Update the total days(length of TeaVendors) after new entry...
+        monthExist.TotalSaleDays = (monthExist.TotalSaleDays || 0) + 1;
+
+        //Save the data in database...
+        await monthExist.save();
+
+        res.status(201).send({ message: "New Entry Successfully Record...", success: true });
 
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: "Failed to entry the record..!!!", success: false });
     }
 }
+
+
 
 module.exports = { managerRegister, managerLogin, createNewYear, managerEntry, createNewMonth };
