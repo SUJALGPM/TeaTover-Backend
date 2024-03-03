@@ -233,6 +233,76 @@ const managerEntry = async (req, res) => {
     }
 }
 
+//Manager Get total Years with month detials Controller...
+const managerYearDetail = async (req, res) => {
+    try {
+        const managerID = req.params.mgrID;
+
+        //Check the manager Exist or not..
+        const managerExist = await managerModel.findById(managerID).populate({
+            path: "TotalYears",
+            populate: {
+                path: 'TotalMonth',
+                model: 'Month'
+            }
+        });
+        if (!managerExist) {
+            return res.status(404).send({ message: "Manager is not Exist..!!!", success: false });
+        }
+
+        // Iterate through the TotalYears and format the response
+        const formattedData = managerExist.TotalYears.map(year => {
+            const totalInvoice = year.TotalMonth.reduce((acc, month) => acc + month.totalInvoice, 0);
+            const totalDays = year.TotalMonth.reduce((acc, month) => acc + month.TotalSaleDays, 0);
+            const totalTeaVendors = year.TotalMonth.reduce((acc, month) => acc + month.TeaVendors.length, 0);
+
+            return {
+                yearObjId: year._id,
+                yearName: year.YearWiseName,
+                totalMonth: year.TotalMonth.length,
+                totalInvoice: totalInvoice,
+                totalDays: totalDays,
+                totalTeaVendors: totalTeaVendors
+            };
+        });
 
 
-module.exports = { managerRegister, managerLogin, createNewYear, managerEntry, createNewMonth };
+        //Give the fetch detail as a response..
+        res.status(201).json({ data: formattedData });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Failed to load the Year wise data..!!!", success: false });
+    }
+}
+
+//Manager Get total Months with there details Controller...
+const managerGetMonthDetail = async (req, res) => {
+    try {
+        const yearID = req.params.yearID;
+
+        //Check the year exist or not....
+        const yearExist = await yearModel.findById(yearID).populate('TotalMonth');
+        if (!yearExist) {
+            return res.status(404).send({ message: "Year not found..!!!", success: false });
+        }
+
+        //Iterate through the month model and formated data...
+        const formatData = yearExist.TotalMonth.map(month => {
+            return {
+                monthObjId: month._id,
+                monthName: month.monthName,
+                totalInvoice: month.totalInvoice,
+                totalDays: month.TotalSaleDays,
+                totalTeaVendors: month.TeaVendors.length
+            }
+        })
+        res.status(201).json({ data: formatData });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Failed to load month detail..!!!", success: false });
+    }
+}
+
+
+module.exports = { managerRegister, managerLogin, createNewYear, managerEntry, createNewMonth, managerYearDetail, managerGetMonthDetail };

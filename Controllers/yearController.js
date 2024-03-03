@@ -2,7 +2,7 @@ const { yearModel } = require('../Modules/yearModel');
 
 
 //Get Totol Year Controller...
-const totalYears = async (req, res) => {
+const totalYearName = async (req, res) => {
     try {
         const fetchYears = await yearModel.find({});
         res.status(201).send({ message: "Total Years Fetched Successfully..", success: true, years: fetchYears });
@@ -12,4 +12,4 @@ const totalYears = async (req, res) => {
     }
 }
 
-module.exports = { totalYears };
+module.exports = { totalYearName };
