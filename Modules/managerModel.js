@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const yearModelSchema = require("./yearModel");
+const { yearSchema } = require("./yearModel");
 
 const managerSchema = mongoose.Schema({
     managerID: {
@@ -22,11 +22,7 @@ const managerSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    TotalYears: {
-        type: [yearModelSchema.yearModelSchema],
-        default: []
-    },
-    TotalManagers: { type: mongoose.Schema.Types.ObjectId, ref: 'Admins' }
+    TotalYears: [{ type: mongoose.Schema.Types.ObjectId, ref: "Year" }]
 });
 
 const managerModel = mongoose.model('Managers', managerSchema);
