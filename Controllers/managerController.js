@@ -306,7 +306,7 @@ const managerGetMonthDetail = async (req, res) => {
 }
 
 //Manager handle the expenses ....
-const managerExpenses = async (req, res) => {
+const managerExpenses = async (req, res) => {   
     try {
         const managerID = req.params.mgrID;
 
@@ -348,6 +348,9 @@ const managerExpenses = async (req, res) => {
         res.status(500).send({ message: "Failed to load the expenses...!!!" });
     }
 }
+
+//Manager Profile....
+const managerProfile = 
 
 
 module.exports = { managerRegister, managerLogin, createNewYear, managerEntry, createNewMonth, managerYearDetail, managerGetMonthDetail, managerExpenses };
