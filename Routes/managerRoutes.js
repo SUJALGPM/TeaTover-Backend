@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require('multer');
-const { managerRegister, managerLogin, createNewYear, createNewMonth, managerEntry, managerYearDetail, managerGetMonthDetail } = require("../Controllers/managerController");
+const { managerRegister, managerLogin, createNewYear, createNewMonth, managerEntry, managerYearDetail, managerGetMonthDetail, managerExpenses } = require("../Controllers/managerController");
 const router = express.Router();
 
 //Manager Register Route....
@@ -23,6 +23,9 @@ router.get("/manager-years-detail/:mgrID", managerYearDetail);
 
 //Manager Get total Months with there details Routes...
 router.get("/manager-month-detail/:yearID", managerGetMonthDetail);
+
+//Manager Get total Expenses with all data Routes..
+router.get("/manager-expenses-detail/:mgrID", managerExpenses);
 
 
 module.exports = router;

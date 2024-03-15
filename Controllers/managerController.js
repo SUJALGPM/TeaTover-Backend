@@ -3,6 +3,7 @@ const { managerModel } = require("../Modules/managerModel");
 const { yearModel, monthModel } = require("../Modules/yearModel");
 const jwt = require("jsonwebtoken");
 
+
 //Register Controller.....
 const managerRegister = async (req, res) => {
     try {
@@ -304,5 +305,49 @@ const managerGetMonthDetail = async (req, res) => {
     }
 }
 
+//Manager handle the expenses ....
+const managerExpenses = async (req, res) => {
+    try {
+        const managerID = req.params.mgrID;
 
-module.exports = { managerRegister, managerLogin, createNewYear, managerEntry, createNewMonth, managerYearDetail, managerGetMonthDetail };
+        //Check the manager Exist or not...
+        const managerExist = await managerModel.findById(managerID).populate({
+            path: "TotalYears",
+            populate: {
+                path: "TotalMonth",
+                model: "Month"
+            }
+        });
+
+        //Report the excel...
+        const expensesReport = [];
+
+        //Loop the data...
+        for (const totalyears of managerExist.TotalYears) {
+            for (totalmonths of totalyears.TotalMonth) {
+                const report = {
+                    MID: managerExist.managerID,
+                    MNAME: managerExist.managerName,
+                    MEMAIL: managerExist.managerEmail,
+                    MPASS: managerExist.managerPassword,
+                    YNAME: totalyears.YearWiseName,
+                    MNAME: totalmonths.monthName,
+                    TVENDOR: totalmonths.TeaVendors.TeaVendorName,
+                    TINVOICE: totalmonths.totalInvoice,
+                    TSALEDAYS: totalmonths.TotalSaleDays,
+                }
+                expensesReport.push(report);
+            }
+        }
+
+
+        res.status(201).json(expensesReport);
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Failed to load the expenses...!!!" });
+    }
+}
+
+
+module.exports = { managerRegister, managerLogin, createNewYear, managerEntry, createNewMonth, managerYearDetail, managerGetMonthDetail, managerExpenses };
